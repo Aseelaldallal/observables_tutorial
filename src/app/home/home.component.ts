@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable, Observer, Subscription } from 'rxjs';
-import 'rxjs/Rx'; // has its own logic for adding imports
+import { Observable, Observer, Subscription, interval } from 'rxjs';
+import { map } from 'rxjs/operators'; // has its own logic for adding imports
 
 @Component({
   selector: 'app-home',
@@ -17,11 +17,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     // memory leak if you don't destroy it
-    const myNumbers = Observable
-      .interval(1000) // emit a new peice of data every second
-      .map( (data : number) => {
+    const myNumbers = interval(1000) // emit a new peice of data every second
+      .pipe(map( (data : number) => {
           return data * 2;
-      }); 
+      })); 
     this.numbersObservablesSubsription = myNumbers.subscribe(
       (number : number) => {
         console.log(number);
