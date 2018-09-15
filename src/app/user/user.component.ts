@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
+import { UsersService } from '../users.service';
 
 @Component({
   selector: 'app-user',
@@ -9,7 +10,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 export class UserComponent implements OnInit {
   id: number;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute, private usersService: UsersService) { }
 
   ngOnInit() {
     this.route.params
@@ -18,6 +19,13 @@ export class UserComponent implements OnInit {
           this.id = +params['id'];
         }
       );
+  }
+
+
+  // subject is observable and observer at the same time
+  // pushing new data package which contains id
+  onActivate() {
+    this.usersService.userActivated.next(this.id); 
   }
 
 }
