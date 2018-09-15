@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable, Observer } from 'rxjs';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Observable, Observer, Subscription } from 'rxjs';
 import 'rxjs/Rx'; // has its own logic for adding imports
 
 @Component({
@@ -7,17 +7,22 @@ import 'rxjs/Rx'; // has its own logic for adding imports
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
+
+  numbersObservablesSubsription: Subscription;
+  customObservableSubscription: Subscription;
 
   constructor() { }
 
   ngOnInit() {
-    // const myNumbers = Observable.interval(1000); // emit a new peice of data every second
-    // myNumbers.subscribe(
-    //   (number : number) => {
-    //     console.log(number);
-    //   }
-    // );
+
+    // memory leak if you don't destroy it
+    const myNumbers = Observable.interval(1000); // emit a new peice of data every second
+    this.numbersObservablesSubsription = myNumbers.subscribe(
+      (number : number) => {
+        console.log(number);
+      }
+    );
 
     const myObservable = Observable.create((observer: Observer<string>) => {
       setTimeout(() => {
@@ -35,7 +40,7 @@ export class HomeComponent implements OnInit {
       }, 6000);
     })
 
-    myObservable.subscribe( 
+    this.customObservableSubscription = myObservable.subscribe( 
       (data: string) => {
         console.log(data);
       },
@@ -47,5 +52,12 @@ export class HomeComponent implements OnInit {
       }
     )
   }
+
+  ngOnDestroy() { // important
+    this.numbersObservablesSubsription.unsubscribe();
+    this.customObservableSubscription.unsubscribe();
+  }
+
+  // fyi angular cleans up its own observables automatically, but implementing ngOnDestory is a good habbit
 
 }
