@@ -17,7 +17,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     // memory leak if you don't destroy it
-    const myNumbers = Observable.interval(1000); // emit a new peice of data every second
+    const myNumbers = Observable
+      .interval(1000) // emit a new peice of data every second
+      .map( (data : number) => {
+          return data * 2;
+      }); 
     this.numbersObservablesSubsription = myNumbers.subscribe(
       (number : number) => {
         console.log(number);
